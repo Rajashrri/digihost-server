@@ -138,27 +138,23 @@ const registerUser = async (req, res, next) => {
  * @desc    Step 1: Login with email + password, send OTP
  * @access  Public
  */
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // 1️⃣ EMAIL CHECK
-const user = await User.findOne({ email }).select("+password");
-if (!user) {
-  return res.status(404).json({
-    success: false,
-    message: "User not found",
-  });
-}
+    // Email check
+    const user = await User.findOne({ email }).select("+password");
 
-if (!user.password) {
-  return res.status(500).json({
-    success: false,
-    message: "Password field missing in DB",
-  });
-}
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
-const isMatch = await bcrypt.compare(password, user.password);
+    // Password check
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({
@@ -167,156 +163,64 @@ const isMatch = await bcrypt.compare(password, user.password);
       });
     }
 
-    // 3️⃣ SUCCESS RESPONSE
+    // =====================================
+    // GENERATE NEW OTP EVERY LOGIN
+    // =====================================
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    user.emailOtp = {
+      code: otp,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
+      attempts: 0,
+    };
+
+    await user.save();
+
+    console.log("Generated OTP:", otp);
+
+    // =====================================
+    // SEND EMAIL
+    // =====================================
+    // Replace with your email function
+    /*
+    await sendEmail({
+      to: user.email,
+      subject: "Login OTP",
+      html: `
+        <h2>Your Login OTP</h2>
+        <h1>${otp}</h1>
+        <p>This OTP is valid for 10 minutes.</p>
+      `,
+    });
+    */
+
+    // =====================================
+    // RESPONSE
+    // =====================================
     return res.status(200).json({
       success: true,
-      message: "Login successful",
-      user,
+      message: "OTP sent successfully",
+      email: user.email,
     });
 
   } catch (error) {
-  console.log("LOGIN ERROR:", error);
+    console.log("LOGIN ERROR:", error);
 
-  return res.status(500).json({
-    success: false,
-    message: error.message,
-  });
-}
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
 /**
  * @route   POST /api/auth/resend-otp
  * @desc    Resend OTP for login verification
  * @access  Public
  */
-const resendOtp = async (req, res, next) => {
-  try {
-    const { email } = req.body;
 
-    if (!email) {
-      throw createHttpError(400, "Email is required");
-    }
 
-    const sanitizedEmail = sanitizeInput(email).toLowerCase();
-
-    const user = await User.findOne({
-      email: sanitizedEmail,
-    }).select("+totpSecret +totpEnabled");
-
-    // Security-safe response
-    if (!user) {
-      return res.status(200).json({
-        success: true,
-        message:
-          "If an account exists, a verification method is available.",
-      });
-    }
-
-    // Inactive account
-    if (!user.isActive) {
-      throw createHttpError(
-        403,
-        "Your account has been deactivated."
-      );
-    }
-
-    // =========================================
-    // GOOGLE AUTHENTICATOR FLOW
-    // =========================================
-
-    if (user.totpEnabled && user.totpSecret) {
-      return res.status(200).json({
-        success: true,
-        type: "GOOGLE_AUTHENTICATOR",
-        message:
-          "Please use the code from your Google Authenticator app.",
-      });
-    }
-
-    // =========================================
-    // EMAIL OTP FLOW
-    // =========================================
-
-    const now = Date.now();
-
-    // Rate limit resend
-    if (user.emailOtp && user.emailOtp.expiresAt) {
-      const otpCreatedAt =
-        user.emailOtp.expiresAt.getTime() - 10 * 60 * 1000;
-
-      const timeSinceOtp = now - otpCreatedAt;
-
-      if (timeSinceOtp < 60 * 1000) {
-        const waitSeconds = Math.ceil(
-          (60 * 1000 - timeSinceOtp) / 1000
-        );
-
-        throw createHttpError(
-          429,
-          `Please wait ${waitSeconds} seconds before requesting a new code.`
-        );
-      }
-    }
-
-    // Generate OTP
-    const otp = generateOTP();
-
-    // Expiry
-    const otpExpiresAt = new Date(
-      now + 10 * 60 * 1000
-    );
-
-    // Save OTP
-    user.emailOtp = {
-      code: otp,
-      expiresAt: otpExpiresAt,
-      attempts: 0,
-    };
-
-    await user.save();
-
-    console.log("RESEND OTP:", otp);
-
-    // =========================================
-    // SEND RESPONSE IMMEDIATELY
-    // =========================================
-
-    res.status(200).json({
-      success: true,
-      type: "EMAIL_OTP",
-      message:
-        "Verification code generated successfully.",
-    });
-
-    // =========================================
-    // SEND EMAIL IN BACKGROUND
-    // =========================================
-
-    sendResendOTPEmail(
-      user.email,
-      user.name,
-      otp,
-      10
-    )
-      .then(() => {
-        console.log("OTP resend email sent");
-      })
-      .catch((emailError) => {
-        console.error(
-          "MAIL ERROR:",
-          emailError.message
-        );
-      });
-
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * @route   POST /api/auth/verify-otp
- * @desc    Step 2: Verify Email OTP or Google Authenticator
- * @access  Public
- */
 const verifyOtp = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
@@ -473,6 +377,136 @@ const verifyOtp = async (req, res, next) => {
     next(error);
   }
 };
+
+const resendOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      throw createHttpError(400, "Email is required");
+    }
+
+    const sanitizedEmail = sanitizeInput(email).toLowerCase();
+
+    const user = await User.findOne({
+      email: sanitizedEmail,
+    }).select("+totpSecret +totpEnabled");
+
+    // Security-safe response
+    if (!user) {
+      return res.status(200).json({
+        success: true,
+        message:
+          "If an account exists, a verification method is available.",
+      });
+    }
+
+    // Inactive account
+    if (!user.isActive) {
+      throw createHttpError(
+        403,
+        "Your account has been deactivated."
+      );
+    }
+
+    // =========================================
+    // GOOGLE AUTHENTICATOR FLOW
+    // =========================================
+
+    if (user.totpEnabled && user.totpSecret) {
+      return res.status(200).json({
+        success: true,
+        type: "GOOGLE_AUTHENTICATOR",
+        message:
+          "Please use the code from your Google Authenticator app.",
+      });
+    }
+
+    // =========================================
+    // EMAIL OTP FLOW
+    // =========================================
+
+    const now = Date.now();
+
+    // Rate limit resend
+    if (user.emailOtp && user.emailOtp.expiresAt) {
+      const otpCreatedAt =
+        user.emailOtp.expiresAt.getTime() - 10 * 60 * 1000;
+
+      const timeSinceOtp = now - otpCreatedAt;
+
+      if (timeSinceOtp < 60 * 1000) {
+        const waitSeconds = Math.ceil(
+          (60 * 1000 - timeSinceOtp) / 1000
+        );
+
+        throw createHttpError(
+          429,
+          `Please wait ${waitSeconds} seconds before requesting a new code.`
+        );
+      }
+    }
+
+    // Generate OTP
+    const otp = generateOTP();
+
+    // Expiry
+    const otpExpiresAt = new Date(
+      now + 10 * 60 * 1000
+    );
+
+    // Save OTP
+    user.emailOtp = {
+      code: otp,
+      expiresAt: otpExpiresAt,
+      attempts: 0,
+    };
+
+    await user.save();
+
+    console.log("RESEND OTP:", otp);
+
+    // =========================================
+    // SEND RESPONSE IMMEDIATELY
+    // =========================================
+
+    res.status(200).json({
+      success: true,
+      type: "EMAIL_OTP",
+      message:
+        "Verification code generated successfully.",
+    });
+
+    // =========================================
+    // SEND EMAIL IN BACKGROUND
+    // =========================================
+
+    sendResendOTPEmail(
+      user.email,
+      user.name,
+      otp,
+      10
+    )
+      .then(() => {
+        console.log("OTP resend email sent");
+      })
+      .catch((emailError) => {
+        console.error(
+          "MAIL ERROR:",
+          emailError.message
+        );
+      });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route   POST /api/auth/verify-otp
+ * @desc    Step 2: Verify Email OTP or Google Authenticator
+ * @access  Public
+ */
 
 /**
  * @route   POST /api/auth/logout
