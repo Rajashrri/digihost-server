@@ -49,7 +49,6 @@ const blogSchema = new mongoose.Schema(
 
      metaTitle: {
       type: String,
-      required: true,
     },
 
     metaKeywords: {
