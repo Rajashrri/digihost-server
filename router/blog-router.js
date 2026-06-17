@@ -3,7 +3,7 @@ const router = express.Router();
 
 const upload = require("../middlewares/upload");
 const { addBlog,getBlogs,deleteBlog,updateBlog, getBlogById,  getSeoById,
-  updateSeo,} = require("../controllers/blogController");
+  updateSeo,} = require("../controllers/BlogController");
 
 router.post(
   "/add-blog",
