@@ -157,11 +157,61 @@ const updateBlog = async (req, res) => {
     });
   }
 };
+const getSeoById = async (req, res) => {
+  try {
+    const seo = await Blog.findById(req.params.id);
 
+    return res.status(200).json({
+      success: true,
+      data: seo,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
+
+const updateSeo = async (req, res) => {
+  try {
+    const {
+      metaTitle,
+      metaKeywords,
+      metaDescription,
+      mainImageAlt,
+      featuredImageAlt,
+      schemaCode,
+    } = req.body;
+
+    await Blog.findByIdAndUpdate(req.params.id, {
+      metaTitle,
+      metaKeywords,
+      metaDescription,
+      mainImageAlt,
+      featuredImageAlt,
+      schemaCode,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "SEO Updated Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+};
 module.exports = {
   addBlog,
   getBlogs,
   deleteBlog,
   getBlogById,
   updateBlog,
+  getSeoById,
+  updateSeo,
 };

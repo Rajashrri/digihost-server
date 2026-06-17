@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../middlewares/upload");
-const { addBlog,getBlogs,deleteBlog,updateBlog, getBlogById} = require("../controllers/blogController");
+const { addBlog,getBlogs,deleteBlog,updateBlog, getBlogById,  getSeoById,
+  updateSeo,} = require("../controllers/blogController");
 
 router.post(
   "/add-blog",
@@ -28,4 +29,8 @@ router.put(
   ]),
   updateBlog
 );
+
+router.get("/blog-seo/:id", getSeoById);
+
+router.put("/blog-updateseo/:id", updateSeo);
 module.exports = router;
