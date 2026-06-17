@@ -24,6 +24,7 @@ const blogCategoryRoutes = require("./router/blogCategoryRoutes");
 const blogRoutes = require("./router/blog-router");
 
 const frontRoutes = require("./router/front-router");
+const listRoutes = require("./router/list-router");
 
 console.log(process.env.WEBSITE_URL);
 
@@ -67,6 +68,9 @@ app.use("/api/auth", authRoute);
 app.use("/api/blog-category", blogCategoryRoutes);
 app.use("/api/blog", blogRoutes);
 app.use("/api/front", frontRoutes);
+app.use("/api/list", listRoutes);
+
+
 
 app.use("/api/ckeditor", ckeditorRoutes);
 app.get("/health", (req, res) => {
