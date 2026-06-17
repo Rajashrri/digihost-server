@@ -11,10 +11,19 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-        status: {
-  type: Number,
-  default: 1
-},
+    author: {
+      type: String,
+      required: true,
+    },
+
+    date: {
+      type: Date,
+      required: true,
+    },
+    status: {
+      type: Number,
+      default: 1,
+    },
     slug: {
       type: String,
       required: true,
@@ -37,7 +46,7 @@ const blogSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Blog", blogSchema);

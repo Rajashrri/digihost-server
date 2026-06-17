@@ -6,6 +6,8 @@ const addBlog = async (req, res) => {
       categoryId,
       title,
       slug,
+      author,
+      date,
       shortDescription,
       description,
     } = req.body;
@@ -16,9 +18,10 @@ const addBlog = async (req, res) => {
       slug,
       shortDescription,
       description,
+      author,
+      date,
       mainImage: req.files?.mainImage?.[0]?.filename || "",
-      featuredImage:
-        req.files?.featuredImage?.[0]?.filename || "",
+      featuredImage: req.files?.featuredImage?.[0]?.filename || "",
     });
 
     await blog.save();
@@ -70,12 +73,9 @@ const getBlogs = async (req, res) => {
   }
 };
 
-
-
- const getBlogById = async (req, res) => {
+const getBlogById = async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id)
-      .populate("categoryId");
+    const blog = await Blog.findById(req.params.id).populate("categoryId");
 
     res.json({
       success: true,
@@ -107,6 +107,9 @@ const updateBlog = async (req, res) => {
       categoryId: req.body.categoryId,
       title: req.body.title,
       slug: req.body.slug,
+
+      author: req.body.author,
+      date: req.body.date,
       shortDescription: req.body.shortDescription,
       description: req.body.description,
     };
@@ -114,19 +117,14 @@ const updateBlog = async (req, res) => {
     // MAIN IMAGE
     if (req.files?.mainImage?.[0]) {
       if (blog.mainImage) {
-        const oldPath = path.join(
-          __dirname,
-          "../public/blog",
-          blog.mainImage
-        );
+        const oldPath = path.join(__dirname, "../public/blog", blog.mainImage);
 
         if (fs.existsSync(oldPath)) {
           fs.unlinkSync(oldPath);
         }
       }
 
-      updateData.mainImage =
-        req.files.mainImage[0].filename; // only filename save
+      updateData.mainImage = req.files.mainImage[0].filename; // only filename save
     }
 
     // FEATURED IMAGE
@@ -135,7 +133,7 @@ const updateBlog = async (req, res) => {
         const oldPath = path.join(
           __dirname,
           "../public/blog",
-          blog.featuredImage
+          blog.featuredImage,
         );
 
         if (fs.existsSync(oldPath)) {
@@ -143,15 +141,10 @@ const updateBlog = async (req, res) => {
         }
       }
 
-      updateData.featuredImage =
-        req.files.featuredImage[0].filename; // only filename save
+      updateData.featuredImage = req.files.featuredImage[0].filename; // only filename save
     }
 
-    await Blog.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      { new: true }
-    );
+    await Blog.findByIdAndUpdate(req.params.id, updateData, { new: true });
 
     res.json({
       success: true,
@@ -165,11 +158,10 @@ const updateBlog = async (req, res) => {
   }
 };
 
-
 module.exports = {
   addBlog,
   getBlogs,
   deleteBlog,
   getBlogById,
-  updateBlog
+  updateBlog,
 };
