@@ -59,23 +59,34 @@ const addCareer = async (req, res) => {
         message: "Resume is required",
       });
     }
-const resumeUrl = await uploadResume(req.file.path);
 
-   const career = await Career.create({
-  fullName,
-  email,
-  mobile,
-  experience,
-  location,
-  coverLetter,
-  resume: resumeUrl,
-});
-try {
-  await sendMail(
-    email,
-    "rajashri@digihost.in",
-    "New Career Application",
-    `
+    // Upload Resume To Cloudinary
+    const resumeUrl = await uploadResume(req.file.path);
+
+    // Save Database
+    const career = await Career.create({
+      fullName,
+      email,
+      mobile,
+      experience,
+      location,
+      coverLetter,
+      resume: resumeUrl,
+    });
+
+    // SUCCESS RESPONSE IMMEDIATELY
+    res.status(200).json({
+      success: true,
+      message: "Application submitted successfully",
+      data: career,
+    });
+
+    // SEND MAIL IN BACKGROUND
+    sendMail(
+      email,
+      "rajashri@digihost.in",
+      "New Career Application",
+      `
       <p><b>Dear Admin,</b></p>
 
       <p>A new career application has been submitted.</p>
@@ -89,29 +100,22 @@ try {
       <p><b>Location:</b> ${location}</p>
       <p><b>Cover Letter:</b> ${coverLetter || "-"}</p>
 
+      <p>
+        <b>Resume:</b>
+        <a href="${resumeUrl}" target="_blank">
+          View Resume
+        </a>
+      </p>
+
       <br>
-
-      <p><b>Resume attached in this email.</b></p>
-
       <p>Regards,<br><b>DIGIIHOST</b></p>
-    `,
-    [
-      {
-        filename: req.file.originalname,
-        path: req.file.path,
-      },
-    ]
-  );
-} catch (mailError) {
-  console.error("Career Mail Error:", mailError.message);
-}
-    return res.status(200).json({
-      success: true,
-      message: "Application submitted successfully",
-      data: career,
+      `
+    ).catch((err) => {
+      console.log("Career Mail Error:", err.message);
     });
+
   } catch (error) {
-    console.log(error);
+    console.log("Career Error:", error);
 
     return res.status(500).json({
       success: false,
