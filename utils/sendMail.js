@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-const sendMail = async (to, subject, html) => {
+const sendMail = async (from,to, subject, html) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -12,7 +12,7 @@ const sendMail = async (to, subject, html) => {
   });
 
   await transporter.sendMail({
-    from: process.env.SMTP_USER,
+      from: from, // client email
     to,   // 👈 dynamic email
     subject,
     html,

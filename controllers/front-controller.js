@@ -21,31 +21,38 @@ const addContact = async (req, res) => {
       message,
     });
 
-await sendMail(
-  "rajashri@digihost.in",
-  "New Contact Inquiry",
-  `
-    <p><b>Dear Admin,</b></p>
+    // Mail send separately
+    try {
+      await sendMail(
+        email,
+        "rajashri@digihost.in",
 
-    <p>A new contact enquiry has been submitted through the website.</p>
+        "New Contact Inquiry",
+        `
+        <p><b>Dear Admin,</b></p>
 
-    <p>Please find the enquiry details below:</p>
+        <p>A new contact enquiry has been submitted through the website.</p>
 
-    <p>You have received a new enquiry from <b>${fullName}</b>.</p>
+        <p>You have received a new enquiry from <b>${fullName}</b>.</p>
 
-    <h3>Details:</h3>
+        <h3>Details:</h3>
 
-    <p><b>Name:</b> ${fullName}</p>
-    <p><b>Email:</b> ${email}</p>
-    <p><b>Phone:</b> ${phone}</p>
-    <p><b>Message:</b> ${message}</p>
+        <p><b>Name:</b> ${fullName}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Phone:</b> ${phone}</p>
+        <p><b>Message:</b> ${message}</p>
 
-    <br>
+        <br>
 
-    <p>Regards,<br><b> DIIGIIHOST</b></p>
-  `
-);
-    res.status(200).json({
+        <p>Regards,<br><b>DIGIIHOST</b></p>
+        `
+      );
+    } catch (mailError) {
+      console.error("Mail Error:", mailError.message);
+      // Sirf log karo, API fail mat karo
+    }
+
+    return res.status(200).json({
       success: true,
       message: "Contact form submitted successfully",
       data: contact,
@@ -53,7 +60,7 @@ await sendMail(
   } catch (error) {
     console.log(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Server Error",
     });
