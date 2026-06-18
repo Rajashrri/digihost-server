@@ -11,10 +11,11 @@ const {
   addCareer
 } = require("../controllers/front-controller");
 
+const resumeUpload = require("../utils/resumeUpload");
 
 router.post(
   "/career",
-  uploadResume.single("resume"),
+  resumeUpload.single("resume"),
   addCareer
 );
 router.get("/blogs", getBlogs);

@@ -4,6 +4,24 @@ const Contact = require("../models/contact-model");
 const sendMail = require("../utils/sendMail");
 const Career = require("../models/Career");
 
+const fs = require("fs");
+const cloudinary = require("../utils/cloudinary");
+const uploadResume = async (filePath) => {
+  const result = await cloudinary.uploader.upload(
+    filePath,
+    {
+      folder: "resume",
+      resource_type: "raw",
+       type: "upload", // public delivery
+  access_mode: "public",
+    }
+  );
+
+  fs.unlinkSync(filePath);
+
+  return result.secure_url;
+};
+
 const addCareer = async (req, res) => {
   try {
     const {
@@ -41,16 +59,17 @@ const addCareer = async (req, res) => {
         message: "Resume is required",
       });
     }
+const resumeUrl = await uploadResume(req.file.path);
 
-    const career = await Career.create({
-      fullName,
-      email,
-      mobile,
-      experience,
-      location,
-      coverLetter,
-      resume: req.file.path,
-    });
+   const career = await Career.create({
+  fullName,
+  email,
+  mobile,
+  experience,
+  location,
+  coverLetter,
+  resume: resumeUrl,
+});
 try {
   await sendMail(
     email,
