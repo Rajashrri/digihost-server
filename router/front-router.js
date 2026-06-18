@@ -1,15 +1,22 @@
 const express = require("express");
 
 const router = express.Router();
+const uploadResume = require("../middlewares/uploadResume");
 
 const {
   getBlogs,
   getBlogDetails,
   getBlogCategories,
   addContact,
-  
- 
+  addCareer
 } = require("../controllers/front-controller");
+
+
+router.post(
+  "/career",
+  uploadResume.single("resume"),
+  addCareer
+);
 router.get("/blogs", getBlogs);
 router.get("/blog/:slug", getBlogDetails);
 router.get("/blog-categories", getBlogCategories);

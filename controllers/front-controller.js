@@ -2,6 +2,104 @@ const Blog = require("../models/Blog");
 const BlogCategory = require("../models/BlogCategory");
 const Contact = require("../models/contact-model");
 const sendMail = require("../utils/sendMail");
+const Career = require("../models/Career");
+
+const addCareer = async (req, res) => {
+  try {
+    const {
+      fullName,
+      email,
+      mobile,
+      experience,
+      location,
+      coverLetter,
+    } = req.body;
+
+    if (
+      !fullName ||
+      !email ||
+      !mobile ||
+      !experience ||
+      !location
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    if (!/^\d{10}$/.test(mobile)) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number must be 10 digits",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Resume is required",
+      });
+    }
+
+    const career = await Career.create({
+      fullName,
+      email,
+      mobile,
+      experience,
+      location,
+      coverLetter,
+      resume: req.file.path,
+    });
+try {
+  await sendMail(
+    email,
+    "rajashri@digihost.in",
+    "New Career Application",
+    `
+      <p><b>Dear Admin,</b></p>
+
+      <p>A new career application has been submitted.</p>
+
+      <h3>Candidate Details</h3>
+
+      <p><b>Name:</b> ${fullName}</p>
+      <p><b>Email:</b> ${email}</p>
+      <p><b>Mobile:</b> ${mobile}</p>
+      <p><b>Experience:</b> ${experience}</p>
+      <p><b>Location:</b> ${location}</p>
+      <p><b>Cover Letter:</b> ${coverLetter || "-"}</p>
+
+      <br>
+
+      <p><b>Resume attached in this email.</b></p>
+
+      <p>Regards,<br><b>DIGIIHOST</b></p>
+    `,
+    [
+      {
+        filename: req.file.originalname,
+        path: req.file.path,
+      },
+    ]
+  );
+} catch (mailError) {
+  console.error("Career Mail Error:", mailError.message);
+}
+    return res.status(200).json({
+      success: true,
+      message: "Application submitted successfully",
+      data: career,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
 
 const addContact = async (req, res) => {
   try {
@@ -137,4 +235,5 @@ module.exports = {
   getBlogDetails,
   getBlogCategories,
   addContact,
+  addCareer
 };
