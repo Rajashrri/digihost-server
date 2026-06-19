@@ -22,7 +22,7 @@ const careerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    postion: {
+    position: {
       type: String,
     },
     coverLetter: {
