@@ -30,6 +30,7 @@ const addCareer = async (req, res) => {
       mobile,
       experience,
       location,
+      position,
       coverLetter,
     } = req.body;
 
@@ -38,6 +39,7 @@ const addCareer = async (req, res) => {
       !email ||
       !mobile ||
       !experience ||
+       !position ||
       !location
     ) {
       return res.status(400).json({
@@ -71,6 +73,7 @@ const addCareer = async (req, res) => {
       experience,
       location,
       coverLetter,
+      position,
       resume: resumeUrl,
     });
 
@@ -98,6 +101,8 @@ const addCareer = async (req, res) => {
       <p><b>Mobile:</b> ${mobile}</p>
       <p><b>Experience:</b> ${experience}</p>
       <p><b>Location:</b> ${location}</p>
+            <p><b>Apply For The Position:</b> ${position}</p>
+
       <p><b>Cover Letter:</b> ${coverLetter || "-"}</p>
 
       <p>

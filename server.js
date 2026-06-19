@@ -15,6 +15,7 @@ const statusMointor = require("express-status-monitor");
 // Routes
 const authRoute = require("./router/auth-router");
 
+const profileRoutes = require("./router/profile-router");
 
 const ckeditorRoutes = require("./router/ckeditor-router");
 
@@ -69,6 +70,7 @@ app.use("/api/blog-category", blogCategoryRoutes);
 app.use("/api/blog", blogRoutes);
 app.use("/api/front", frontRoutes);
 app.use("/api/list", listRoutes);
+app.use("/api/profile", profileRoutes);
 
 
 

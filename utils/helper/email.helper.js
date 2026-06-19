@@ -11,7 +11,7 @@ const getWelcomeEmailTemplate = (
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to WE FANSS</title>
+  <title>Welcome to DIIGIIHOST</title>
   <style>
     body {
       margin: 0;
@@ -40,7 +40,7 @@ const getWelcomeEmailTemplate = (
             <tr>
               <td style="padding: 0 30px 30px 30px;">
                 <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600; line-height: 1.3;">
-                  Congratulations! Your WE FANSS Account Is Ready
+                  Congratulations! Your DIIGIIHOST Account Is Ready
                 </h1>
               </td>
             </tr>
@@ -134,7 +134,7 @@ const getWelcomeEmailTemplate = (
                 
                 <p style="margin: 20px 0 0 0; color: #e0e0e0; font-size: 14px; line-height: 1.6;">
                   Warm regards,<br>
-                  <strong style="color: #0F4F72;">Team WE FANSS</strong>
+                  <strong style="color: #0F4F72;">Team DIIGIIHOST</strong>
                 </p>
               </td>
             </tr>
@@ -150,7 +150,7 @@ const getWelcomeEmailTemplate = (
             <tr>
               <td style="padding: 30px; text-align: left;">
                 <p style="margin: 0 0 5px; color: #808080; font-size: 12px; line-height: 1.5;">
-                  © ${new Date().getFullYear()} WE FANSS. All Rights Reserved
+                  © ${new Date().getFullYear()} DIIGIIHOST. All Rights Reserved
                 </p>
                 <p style="margin: 5px 0 0; color: #808080; font-size: 12px; line-height: 1.5;">
                   This is an automated message, please do not reply to this email.
@@ -275,7 +275,7 @@ If you did not request this password reset, please ignore this email.
 
 <p style="margin:30px 0 0 0; color:#e0e0e0; font-size:14px; line-height:1.6;">
 Regards,<br>
-<strong style="color:#0F4F72;">Team WE FANSS</strong>
+<strong style="color:#0F4F72;">Team DIIGIIHOST</strong>
 </p>
 
 </td>
@@ -292,7 +292,7 @@ Regards,<br>
 <tr>
 <td style="padding:30px; text-align:left;">
 <p style="margin:0 0 5px; color:#808080; font-size:12px; line-height:1.5;">
-© ${new Date().getFullYear()} WE FANSS. All Rights Reserved
+© ${new Date().getFullYear()} DIIGIIHOST. All Rights Reserved
 </p>
 
 <p style="margin:5px 0 0; color:#808080; font-size:12px; line-height:1.5;">
@@ -320,7 +320,7 @@ const getLoginOTPTemplate = (username, otp, expiryMinutes = 10) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your WE FANSS Login OTP</title>
+  <title>Your DIIGIIHOST Login OTP</title>
   <style>
     body {
       margin: 0;
@@ -349,7 +349,7 @@ const getLoginOTPTemplate = (username, otp, expiryMinutes = 10) => {
             <tr>
               <td style="padding: 0 30px 30px 30px;">
                 <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600; line-height: 1.3;">
-                  Your WE FANSS Login OTP
+                  Your DIIGIIHOST Login OTP
                 </h1>
               </td>
             </tr>
@@ -402,7 +402,7 @@ const getLoginOTPTemplate = (username, otp, expiryMinutes = 10) => {
                 
                 <p style="margin: 30px 0 0 0; color: #e0e0e0; font-size: 14px; line-height: 1.6;">
                   Regards,<br>
-                  <strong style="color: #0F4F72;">Team WE FANSS</strong>
+                  <strong style="color: #0F4F72;">Team DIIGIIHOST</strong>
                 </p>
               </td>
             </tr>
@@ -418,7 +418,7 @@ const getLoginOTPTemplate = (username, otp, expiryMinutes = 10) => {
             <tr>
               <td style="padding: 30px; text-align: left;">
                 <p style="margin: 0 0 5px; color: #808080; font-size: 12px; line-height: 1.5;">
-                  © ${new Date().getFullYear()} WE FANSS. All Rights Reserved
+                  © ${new Date().getFullYear()} DIIGIIHOST. All Rights Reserved
                 </p>
                 <p style="margin: 5px 0 0; color: #808080; font-size: 12px; line-height: 1.5;">
                   This is an automated message, please do not reply to this email.
@@ -473,7 +473,7 @@ const getForgotPasswordOTPTemplate = (username, otp, expiryMinutes = 10) => {
             <tr>
               <td style="padding: 0 30px 30px 30px;">
                 <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 600; line-height: 1.3;">
-                  WE FANSS – Password Reset OTP
+                  DIIGIIHOST – Password Reset OTP
                 </h1>
               </td>
             </tr>
@@ -526,7 +526,7 @@ const getForgotPasswordOTPTemplate = (username, otp, expiryMinutes = 10) => {
                 
                 <p style="margin: 30px 0 0 0; color: #e0e0e0; font-size: 14px; line-height: 1.6;">
                   Regards,<br>
-                  <strong style="color: #0F4F72;">Team WE FANSS</strong>
+                  <strong style="color: #0F4F72;">Team DIIGIIHOST</strong>
                 </p>
               </td>
             </tr>
@@ -542,7 +542,7 @@ const getForgotPasswordOTPTemplate = (username, otp, expiryMinutes = 10) => {
             <tr>
               <td style="padding: 30px; text-align: left;">
                 <p style="margin: 0 0 5px; color: #808080; font-size: 12px; line-height: 1.5;">
-                  © ${new Date().getFullYear()} WE FANSS. All Rights Reserved
+                  © ${new Date().getFullYear()} DIIGIIHOST. All Rights Reserved
                 </p>
                 <p style="margin: 5px 0 0; color: #808080; font-size: 12px; line-height: 1.5;">
                   This is an automated message, please do not reply to this email.

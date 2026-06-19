@@ -618,25 +618,35 @@ const forgotPassword = async (req, res, next) => {
     const { email } = req.body;
 
     if (!email) {
-      throw createHttpError(
-        400,
-        "Please provide your email address"
-      );
+      return res.status(400).json({
+        success: false,
+        message: "Please provide your email address",
+      });
     }
 
-    const sanitizedEmail =
-      sanitizeInput(email).toLowerCase();
+    const sanitizedEmail = sanitizeInput(email).toLowerCase();
 
     const user = await User.findOne({
       email: sanitizedEmail,
     });
 
-    // Security Response
-    if (!user || !user.isActive) {
-      return res.status(200).json({
-        success: true,
-        message:
-          "If the email is registered, a password reset link has been sent successfully.",
+    // ===================================
+    // EMAIL NOT FOUND
+    // ===================================
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Email not found",
+      });
+    }
+
+    // ===================================
+    // ACCOUNT INACTIVE
+    // ===================================
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account is inactive",
       });
     }
 
@@ -653,10 +663,11 @@ const forgotPassword = async (req, res, next) => {
             14 * 60 * 1000
         )
     ) {
-      throw createHttpError(
-        429,
-        "Please wait before requesting another reset link."
-      );
+      return res.status(429).json({
+        success: false,
+        message:
+          "Please wait before requesting another reset link.",
+      });
     }
 
     // ===================================
@@ -677,8 +688,7 @@ const forgotPassword = async (req, res, next) => {
     // RESET LINK
     // ===================================
     const resetLink =
-      `${process.env.FRONTEND_URL}` +
-      `/auth/reset-password?token=${token}`;
+      `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
     // ===================================
     // SEND EMAIL
@@ -695,22 +705,26 @@ const forgotPassword = async (req, res, next) => {
         emailError
       );
 
-      throw createHttpError(
-        500,
-        "Failed to send password reset link."
-      );
+      return res.status(500).json({
+        success: false,
+        message:
+          "Failed to send password reset link",
+      });
     }
 
+    // ===================================
+    // SUCCESS
+    // ===================================
     return res.status(200).json({
       success: true,
       message:
         "Password reset link has been sent to your email.",
     });
   } catch (error) {
+    console.error("FORGOT PASSWORD ERROR:", error);
     next(error);
   }
 };
-
 /**
  * @route   POST /api/auth/verify-reset-otp
  * @desc    Step 2: Verify reset OTP only (no password change)

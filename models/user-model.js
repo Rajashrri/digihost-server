@@ -32,7 +32,11 @@ const userSchema = new mongoose.Schema(
     ref: "Role",
     
   },
-
+phone: {
+  type: String,
+  default: "",
+  trim: true,
+},
     // Account Status
     isActive: {
       type: Boolean,

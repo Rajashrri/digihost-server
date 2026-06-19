@@ -51,10 +51,10 @@ const upload = multer({
 router.use(authenticate);
 
 // Get current user profile - GET /api/profile
-router.get("/", profilecontrollers.getProfile);
+router.get("/getprofile", profilecontrollers.getProfile);
 
 // Update current user profile - PUT /api/profile
-router.put("/", upload.single("pic"), profilecontrollers.updateProfile);
+router.put("/update", upload.single("pic"), profilecontrollers.updateProfile);
 
 // Update current user password - PUT /api/profile/password
 router.put("/password", profilecontrollers.updatePassword);

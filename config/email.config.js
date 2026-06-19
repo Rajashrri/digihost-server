@@ -40,7 +40,7 @@ const sendEmail = async ({ to, subject, text, html, attachments }) => {
 
   try {
     const mailOptions = {
-      from: `"WE FANSS" <${process.env.SMTP_USER}>`,
+      from: `" DIIGIIHOST" <${process.env.SMTP_USER}>`,
       to,
       subject,
       text,
@@ -81,7 +81,7 @@ const sendLoginOTPEmail = async (to, username, otp, expiryMinutes = 10) => {
   const html = getLoginOTPTemplate(username, otp, expiryMinutes);
   const text = `Dear ${username},
 
-We received a request to log in to your WE FANSS account.
+We received a request to log in to your DIIGIIHOST account.
 
 Please use the One-Time Password (OTP) below to complete your login:
 
@@ -92,11 +92,11 @@ This OTP is valid for ${expiryMinutes} minutes. For security reasons, please do 
 If you did not initiate this login request, please contact our support team immediately.
 
 Regards,
-Team WE FANSS`;
+Team DIIGIIHOST`;
 
   await sendEmail({
     to,
-    subject: "Your WE FANSS Login OTP",
+    subject: "Your DIIGIIHOST Login OTP",
     text,
     html,
   });
@@ -107,7 +107,7 @@ const sendForgotPasswordOTPEmail = async (to, username, otp, expiryMinutes = 10)
   const html = getForgotPasswordOTPTemplate(username, otp, expiryMinutes);
   const text = `Dear ${username},
 
-We received a request to reset the password for your WE FANSS account.
+We received a request to reset the password for your DIIGIIHOST account.
 
 Please use the One-Time Password (OTP) below to proceed with resetting your password:
 
@@ -118,11 +118,11 @@ This OTP is valid for ${expiryMinutes} minutes and can be used only once. For se
 If you did not request a password reset, please ignore this email or contact our support team immediately.
 
 Regards,
-Team WE FANSS`;
+Team DIIGIIHOST`;
 
   await sendEmail({
     to,
-    subject: "WE FANSS – Password Reset OTP",
+    subject: "DIIGIIHOST – Password Reset OTP",
     text,
     html,
   });
@@ -150,7 +150,7 @@ const sendResendOTPEmail = async (
 
   const text = `Dear ${username},
 
-A new verification code has been requested for your WE FANSS account.
+A new verification code has been requested for your DIIGIIHOST account.
 
 Your New OTP: ${otp}
 
@@ -159,11 +159,11 @@ This OTP is valid for ${expiryMinutes} minutes.
 If you did not request this code, please contact support immediately.
 
 Regards,
-Team WE FANSS`;
+Team DIIGIIHOST`;
 
   await sendEmail({
     to,
-    subject: "Your WE FANSS Resend OTP Code",
+    subject: "Your DIIGIIHOST Resend OTP Code",
     text,
     html,
   });
@@ -195,11 +195,11 @@ This link is valid for 15 minutes.
 If you did not request this password reset, please ignore this email.
 
 Regards,
-Team WE FANSS`;
+Team DIIGIIHOST`;
 
   await sendEmail({
     to,
-    subject: "WE FANSS - Reset Password Link",
+    subject: " DIIGIIHOST - Reset Password Link",
     text,
     html,
   });
@@ -219,11 +219,11 @@ const sendWelcomeEmail = async (
     secret
   );
 
-  const text = `Congratulations! Your WE FANSS Account Is Ready
+  const text = `Congratulations! Your DIIGIIHOST Account Is Ready
 
 Dear ${username},
 
-Congratulations! Your account has been successfully created on WE FANSS.
+Congratulations! Your account has been successfully created on DIIGIIHOST.
 
 You can access your account using the credentials below:
 
@@ -240,16 +240,16 @@ Authenticator Setup Key: ${secret}
 If you have any questions or need assistance, feel free to reach out to us.
 
 Warm regards,
-Team WE FANSS
+Team DIIGIIHOST
 
 ---
-© ${new Date().getFullYear()} WE FANSS. All rights reserved.
+© ${new Date().getFullYear()} DIIGIIHOST. All rights reserved.
 This is an automated message, please do not reply to this email.
 `;
 
   await sendEmail({
     to,
-    subject: "Congratulations! Your WE FANSS Account Is Ready",
+    subject: "Congratulations! Your DIIGIIHOST Account Is Ready",
     text,
     html,
     attachments: qrCodeBuffer ? [
