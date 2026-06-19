@@ -67,7 +67,6 @@ const updateProfile = async (req, res) => {
     delete updateData.totpSecret;     // ❌ Security field
     delete updateData.totpQrCode;     // ❌ Security field
     delete updateData.refreshTokens;  // ❌ Security field
-    delete updateData.email;          // ❌ Email change requires separate verification
     delete updateData.emailOtp;       // ❌ Security field
     delete updateData.passwordResetOtp; // ❌ Security field
     delete updateData.lastLogin;      // ❌ System managed
@@ -75,7 +74,7 @@ const updateProfile = async (req, res) => {
     delete updateData.lastLoginDevice; // ❌ System managed
 
     // Only allow updating: name, profilePic (and any other safe fields you add later)
-const allowedFields = ["name", "phone"];
+const allowedFields = ["name", "phone","email"];
     const filteredUpdateData = {};
     
     allowedFields.forEach(field => {
