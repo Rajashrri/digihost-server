@@ -120,5 +120,6 @@ module.exports = {
   processCelebrityFiles,
   professionUpload,
     celebrityUpload,
+  uploadToCloudinary, // add this
 
 };

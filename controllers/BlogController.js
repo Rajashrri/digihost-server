@@ -1,5 +1,6 @@
 const Blog = require("../models/Blog");
-
+const { uploadToCloudinary } = require("../utils/upload");
+const deleteFromCloudinary = require("../utils/cloudinaryDelete");
 const addBlog = async (req, res) => {
   try {
     const {
@@ -12,27 +13,44 @@ const addBlog = async (req, res) => {
       description,
     } = req.body;
 
+    let mainImage = "";
+    let featuredImage = "";
+
+    if (req.files?.mainImage?.[0]) {
+      mainImage = await uploadToCloudinary(
+        req.files.mainImage[0].path,
+        "blog/main"
+      );
+    }
+
+    if (req.files?.featuredImage?.[0]) {
+      featuredImage = await uploadToCloudinary(
+        req.files.featuredImage[0].path,
+        "blog/featured"
+      );
+    }
+
     const blog = new Blog({
       categoryId,
       title,
       slug,
-      shortDescription,
-      description,
       author,
       date,
-      mainImage: req.files?.mainImage?.[0]?.filename || "",
-      featuredImage: req.files?.featuredImage?.[0]?.filename || "",
+      shortDescription,
+      description,
+      mainImage,
+      featuredImage,
     });
 
     await blog.save();
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Blog added successfully",
       data: blog,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -41,6 +59,23 @@ const addBlog = async (req, res) => {
 
 const deleteBlog = async (req, res) => {
   try {
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found",
+      });
+    }
+
+    if (blog.mainImage) {
+      await deleteFromCloudinary(blog.mainImage);
+    }
+
+    if (blog.featuredImage) {
+      await deleteFromCloudinary(blog.featuredImage);
+    }
+
     await Blog.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
@@ -107,46 +142,39 @@ const updateBlog = async (req, res) => {
       categoryId: req.body.categoryId,
       title: req.body.title,
       slug: req.body.slug,
-
       author: req.body.author,
       date: req.body.date,
       shortDescription: req.body.shortDescription,
       description: req.body.description,
     };
 
-    // MAIN IMAGE
+    // Main Image
     if (req.files?.mainImage?.[0]) {
       if (blog.mainImage) {
-        const oldPath = path.join(__dirname, "../public/blog", blog.mainImage);
-
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
+        await deleteFromCloudinary(blog.mainImage);
       }
 
-      updateData.mainImage = req.files.mainImage[0].filename; // only filename save
+      updateData.mainImage = await uploadToCloudinary(
+        req.files.mainImage[0].path,
+        "blog/main"
+      );
     }
 
-    // FEATURED IMAGE
+    // Featured Image
     if (req.files?.featuredImage?.[0]) {
       if (blog.featuredImage) {
-        const oldPath = path.join(
-          __dirname,
-          "../public/blog",
-          blog.featuredImage,
-        );
-
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
+        await deleteFromCloudinary(blog.featuredImage);
       }
 
-      updateData.featuredImage = req.files.featuredImage[0].filename; // only filename save
+      updateData.featuredImage = await uploadToCloudinary(
+        req.files.featuredImage[0].path,
+        "blog/featured"
+      );
     }
 
-    await Blog.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    await Blog.findByIdAndUpdate(req.params.id, updateData);
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Blog updated successfully",
     });
